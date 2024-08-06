@@ -1,1 +1,30 @@
+from requests import get
+from bs4 import BeautifulSoup
+import pandas as pd
 
+URL = 'https://pl.twstats.com/pl202/index.php?page=rankings&mode=players&searchstring=&pn='
+
+
+def pobranie_stron(number):
+    print(f'Pracuje nad stroną {number}')
+    global data
+    page = get(f'{URL}{number}')
+    bs = BeautifulSoup(page.text, 'html.parser')
+    # Znajdowanie tabeli i parsowanie danych
+    tabela = bs.find('table', class_='widget')
+    wiersze = tabela.find_all('tr')
+    data = []
+    for wiersz in wiersze:
+        kolumny = wiersz.find_all('td')
+        kolumny = [ele.text.strip() for ele in kolumny]
+        data.append(kolumny)
+
+
+# Pobieranie zawartości strony
+for strona in range(1,50):
+    pobranie_stron(strona)
+
+df = pd.DataFrame(data, columns = ['Ranking','Imię','Plemię','Punkty','Wioski','Średnio pkt'])
+df = df.dropna(subset=[df.columns[0]])
+
+print(df.to_string(index=False))
