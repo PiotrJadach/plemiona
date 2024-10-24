@@ -1,9 +1,29 @@
 from requests import get
 from bs4 import BeautifulSoup
 import pandas as pd
+import sqlite3
+import datetime
 
 URL = 'https://pl.twstats.com/pl202/index.php?page=rankings&mode=players&searchstring=&pn='
 
+today = datetime.date.today().strftime("%Y%m%d")
+table_name = f"a{today}"
+
+
+db = sqlite3.connect('plemiona.db')
+cursor = db.cursor()
+
+cursor.execute(f"""
+        CREATE TABLE {table_name} 
+        (
+            Ranking INT , 
+            Imie TEXT, 
+            Plemie TEXT, 
+            Punkty INT, 
+            Wioski INT, 
+            Srednio_pkt INT
+        )
+    """)
 
 def pobranie_stron(number):
     print(f'Pracuje nad stroną {number}')
@@ -13,18 +33,21 @@ def pobranie_stron(number):
     # Znajdowanie tabeli i parsowanie danych
     tabela = bs.find('table', class_='widget')
     wiersze = tabela.find_all('tr')
-    data = []
+
     for wiersz in wiersze:
         kolumny = wiersz.find_all('td')
         kolumny = [ele.text.strip() for ele in kolumny]
         data.append(kolumny)
 
+data = []
 
 # Pobieranie zawartości strony
-for strona in range(1,50):
+for strona in range(1, 30):
     pobranie_stron(strona)
 
-df = pd.DataFrame(data, columns = ['Ranking','Imię','Plemię','Punkty','Wioski','Średnio pkt'])
+df = pd.DataFrame(data, columns=['Ranking', 'Imie', 'Plemie', 'Punkty', 'Wioski', 'Srednio_pkt'])
 df = df.dropna(subset=[df.columns[0]])
 
-print(df.to_string(index=False))
+cursor.executemany(f"INSERT INTO {table_name} VALUES (?,?,?,?,?,?)",df.values.tolist())
+db.commit()
+db.close()
