@@ -10,7 +10,7 @@ URL = 'https://pl.twstats.com/pl202/index.php?page=rankings&mode=players&searchs
 today = datetime.date.today().strftime("%Y%m%d")
 table_name = f"a{today}"
 
-db = psycopg.connect(dbname="postgres", user="postgres", port=5433) 
+db = psycopg.connect
 
 cursor = db.cursor()
 
