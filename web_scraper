@@ -12,7 +12,7 @@ table_name = f"a{today}"
 
 db = psycopg.connect
 
-cursor = db.cursor(exist and works)
+cursor = db.cursor()
 
 cursor.execute(f"""
         CREATE TABLE {table_name} 
