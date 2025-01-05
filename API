@@ -1,22 +1,29 @@
-import psycopg2
+import psycopg
 from flask import Flask, jsonify
-conn = psycopg2.connect()
 
+# Dane do połączenia z bazą danych
+db = psycopg.connect()
+
+# Utworzenie kursora
 cur = conn.cursor()
-cur.execute("SELECT * FROM dzienne_porownanie")
 
+# Zapytanie do pobrania danych z widoku
+cur.execute("SELECT * FROM dzienne_porownanie")
 results = cur.fetchall()
 
+# Zamknięcie połączenia
 cur.close()
 conn.close()
 
 app = Flask(__name__)
 
-#mapowanie do urlu .../data
 @app.route('/data')
-
 def get_data():
+    # Tutaj używamy danych pobranych wcześniej
     return jsonify(results)
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
+    
+    
