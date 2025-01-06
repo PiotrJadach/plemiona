@@ -12,7 +12,7 @@ def connect_to_db(config_file='config.ini'):
 
 app = Flask(__name__)
 
-@app.route('/data')
+@app.route('/data', methods=['GET'])
 def get_data():
     conn = connect_to_db()
     cur = conn.cursor()
