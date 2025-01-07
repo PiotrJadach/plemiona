@@ -3,10 +3,10 @@ import configparser
 from flask import Flask, jsonify
 
 # Dane do połączenia z bazą danych
-def connect_to_db(config_file='config.ini'):
+def connect_to_db(config_file='XXXXX.ini'):
     config = configparser.ConfigParser()
     config.read(config_file)
-    params = config['POST']
+    params = config['XXXX']
     conn = psycopg2.connect(**params)
     return conn
 
